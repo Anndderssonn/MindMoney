@@ -29,8 +29,20 @@ class _HomeScreenState extends State<HomeScreen> {
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => const NewExpense(),
+      builder: (context) => NewExpense(onAddExpense: _addExpense),
     );
+  }
+
+  void _addExpense(ExpenseEntity expense) {
+    setState(() {
+      _expensesRegistered.add(expense);
+    });
+  }
+
+  void _removeExpense(ExpenseEntity expense) {
+    setState(() {
+      _expensesRegistered.remove(expense);
+    });
   }
 
   @override
@@ -48,7 +60,12 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           Text('The chart!'),
-          Expanded(child: ExpensesList(expenses: _expensesRegistered)),
+          Expanded(
+            child: ExpensesList(
+              expenses: _expensesRegistered,
+              onRemoveExpense: _removeExpense,
+            ),
+          ),
         ],
       ),
     );

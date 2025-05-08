@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mindmoney/domain/entities/expense_entity.dart';
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
+  final void Function(ExpenseEntity expense) onAddExpense;
+
+  const NewExpense({super.key, required this.onAddExpense});
 
   @override
   State<NewExpense> createState() => _NewExpenseState();
@@ -27,6 +29,45 @@ class _NewExpenseState extends State<NewExpense> {
     setState(() {
       _selectedDate = datePicked;
     });
+  }
+
+  void _submitExpenseData() {
+    final enteredAmount = double.tryParse(
+      _amountController.text.replaceFirst(',', '.'),
+    );
+    final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
+    if (_titleController.text.trim().isEmpty ||
+        amountIsInvalid ||
+        _selectedDate == null) {
+      showDialog(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Invalid form'),
+              content: const Text(
+                'Please make sure a valid title, amount, date and category was entered.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+      );
+      return;
+    }
+    widget.onAddExpense(
+      ExpenseEntity(
+        title: _titleController.text,
+        amount: enteredAmount,
+        date: _selectedDate!,
+        category: _selectedCategory,
+      ),
+    );
+    Navigator.pop(context);
   }
 
   @override
@@ -109,7 +150,10 @@ class _NewExpenseState extends State<NewExpense> {
                 },
                 child: const Text('Discard'),
               ),
-              ElevatedButton(onPressed: () {}, child: const Text('Save')),
+              ElevatedButton(
+                onPressed: _submitExpenseData,
+                child: const Text('Save'),
+              ),
             ],
           ),
         ],
