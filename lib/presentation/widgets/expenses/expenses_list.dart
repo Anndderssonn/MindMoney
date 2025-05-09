@@ -34,3 +34,22 @@ class ExpensesList extends StatelessWidget {
     );
   }
 }
+
+class ExpenseBucket {
+  final Categories category;
+  final List<ExpenseEntity> expenses;
+
+  ExpenseBucket({required this.category, required this.expenses});
+
+  ExpenseBucket.forCategory(List<ExpenseEntity> allExpenses, this.category)
+    : expenses =
+          allExpenses.where((expense) => expense.category == category).toList();
+
+  double get totalExpenses {
+    double sum = 0;
+    for (final expense in expenses) {
+      sum += expense.amount;
+    }
+    return sum;
+  }
+}

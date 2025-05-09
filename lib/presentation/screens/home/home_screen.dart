@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mindmoney/domain/entities/expense_entity.dart';
 import 'package:mindmoney/presentation/screens/expenses/new_expense.dart';
+import 'package:mindmoney/presentation/widgets/charts/chart.dart';
 import 'package:mindmoney/presentation/widgets/expenses/expenses_list.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -87,7 +88,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Column(
-        children: [Text('The chart!'), Expanded(child: mainContent)],
+        children: [
+          Chart(expenses: _expensesRegistered),
+          Expanded(child: mainContent),
+        ],
       ),
     );
   }
