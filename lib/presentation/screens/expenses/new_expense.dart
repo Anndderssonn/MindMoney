@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mindmoney/domain/entities/expense_entity.dart';
 
@@ -31,14 +34,27 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
-  void _submitExpenseData() {
-    final enteredAmount = double.tryParse(
-      _amountController.text.replaceFirst(',', '.'),
-    );
-    final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
-    if (_titleController.text.trim().isEmpty ||
-        amountIsInvalid ||
-        _selectedDate == null) {
+  void _showDialogBySystem() {
+    if (Platform.isIOS) {
+      showCupertinoDialog(
+        context: context,
+        builder:
+            (context) => CupertinoAlertDialog(
+              title: const Text('Invalid form'),
+              content: const Text(
+                'Please make sure a valid title, amount, date and category was entered.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+      );
+    } else {
       showDialog(
         context: context,
         builder:
@@ -57,6 +73,18 @@ class _NewExpenseState extends State<NewExpense> {
               ],
             ),
       );
+    }
+  }
+
+  void _submitExpenseData() {
+    final enteredAmount = double.tryParse(
+      _amountController.text.replaceFirst(',', '.'),
+    );
+    final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
+    if (_titleController.text.trim().isEmpty ||
+        amountIsInvalid ||
+        _selectedDate == null) {
+      _showDialogBySystem();
       return;
     }
     widget.onAddExpense(
